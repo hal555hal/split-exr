@@ -1,10 +1,29 @@
+from os import pipe
 import nuke
-from PySide import QtCore
-from PySide import QtGui
-from models import LayersListModel
-from ui import SplitLayersUI
+# from PySide2 import QtCore
+# from PySide2 import QtGui
+# from .models import LayersListModel
+# from .ui import SplitLayersUI
 import nuke_actions
 
+try:
+    if nuke.NUKE_VERSION_MAJOR < 11:
+        from PySide import QtCore, QtGui, QtGui as QtWidgets
+        from PySide.QtCore import Qt
+        from .models import LayersListModel
+        from .ui import SplitLayersUI
+    elif nuke.NUKE_VERSION_MAJOR < 16:
+        from PySide2 import QtWidgets, QtGui, QtCore
+        from PySide2.QtCore import Qt
+        from .ui import SplitLayersUI
+        from .models import LayersListModel
+    else:
+        from PySide6 import QtWidgets, QtGui, QtCore
+        # from PySide6.QtCore import Qt
+        from .ui import SplitLayersUI
+        from .models import LayersListModel
+except ImportError:
+    from Qt import QtCore, QtGui, QtWidgets
 
 
 def main():
@@ -12,7 +31,7 @@ def main():
     try:
         node = nuke.selectedNode()
     except ValueError as err:
-        print err
+        print(err)
         nuke.message('no node selected')
     if node:
         node_data = data_collect(node)
@@ -37,14 +56,17 @@ class SplitLayers(SplitLayersUI):
         self.split_explicit = split_explicit
         self.split_implicit = split_implicit
 
-        self.proxyModel = QtGui.QSortFilterProxyModel()
+        self.proxyModel = QtCore.QSortFilterProxyModel()
         self.input_model = LayersListModel(self.layers)
         self.split_model = LayersListModel(self.layers_for_split)
 
         self.proxyModel.setSourceModel(self.input_model)
         self.proxyModel.setDynamicSortFilter(True)
 
-        self.proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        if nuke.NUKE_VERSION_MAJOR < 12:
+            self.proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        else:
+            self.proxyModel.setFilterCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive) 
 
         self.input_listview.setModel(self.proxyModel)
         self.split_listview.setModel(self.split_model)
@@ -53,7 +75,10 @@ class SplitLayers(SplitLayersUI):
         self.alpha_combobox.addItems(self.channels)
         i = self.alpha_combobox.findText('rgba.alpha')
         self.alpha_combobox.setCurrentIndex(i)
-        self.filter_lineedit.textChanged.connect(self.proxyModel.setFilterRegExp)
+        if nuke.NUKE_VERSION_MAJOR < 12:
+            self.filter_lineedit.textChanged.connect(self.proxyModel.setFilterRegExp)
+        else:
+            self.filter_lineedit.textChanged.connect(self.proxyModel.setFilterRegularExpression)
 
         self.split_pushbutton.clicked.connect(lambda: self.split(self.method_combobox.currentText()))
         self.cancel_pushbutton.clicked.connect(self.close)
