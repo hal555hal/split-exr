@@ -4,8 +4,6 @@ import nuke
 # from PySide2 import QtGui
 # from .models import LayersListModel
 # from .ui import SplitLayersUI
-import nuke_actions
-
 try:
     if nuke.NUKE_VERSION_MAJOR < 11:
         from PySide import QtCore, QtGui, QtGui as QtWidgets
@@ -25,6 +23,7 @@ try:
 except ImportError:
     from Qt import QtCore, QtGui, QtWidgets
 
+import nuke_actions
 
 def main():
     node = None
