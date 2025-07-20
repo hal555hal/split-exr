@@ -1,8 +1,10 @@
 ## Split .exr layers in nuke 
 
 
-### Issues
-The script doesn't work in nuke >= 11!
+### Develp
+update for Nuke12 with picore2
+upsate for Nuke13 with python3
+update for Buke16 with picore6
 
 ### How it works
 
