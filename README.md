@@ -2,9 +2,9 @@
 
 
 ### Develp
-update for Nuke12 with picore2
-upsate for Nuke13 with python3
-update for Buke16 with picore6
+- update for Nuke12 with picore2
+- upsate for Nuke13 with python3
+- update for Nuke16 with picore6
 
 ### How it works
 
