@@ -21,5 +21,4 @@ For example, modify init.py
 import nuke
 
 nuke.pluginAddPath("./python/split-exr")
-nuke.pluginAddPath("./python/split-exr/split_layers16")
 ```
