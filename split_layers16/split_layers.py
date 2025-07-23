@@ -1,15 +1,11 @@
 from os import pipe
 import nuke
-# from PySide2 import QtCore
-# from PySide2 import QtGui
-# from .models import LayersListModel
-# from .ui import SplitLayersUI
 try:
     if nuke.NUKE_VERSION_MAJOR < 11:
-        from PySide import QtCore, QtGui, QtGui as QtWidgets
-        from PySide.QtCore import Qt
-        from .models import LayersListModel
-        from .ui import SplitLayersUI
+        from PySide import QtCore
+        from PySide import QtGui
+        from models import LayersListModel
+        from uiREGACY import SplitLayersUI
     elif nuke.NUKE_VERSION_MAJOR < 16:
         from PySide2 import QtWidgets, QtGui, QtCore
         from PySide2.QtCore import Qt
@@ -55,7 +51,10 @@ class SplitLayers(SplitLayersUI):
         self.split_explicit = split_explicit
         self.split_implicit = split_implicit
 
-        self.proxyModel = QtCore.QSortFilterProxyModel()
+        if nuke.NUKE_VERSION_MAJOR < 11:
+            self.proxyModel = QtGui.QSortFilterProxyModel()
+        else:
+            self.proxyModel = QtCore.QSortFilterProxyModel()
         self.input_model = LayersListModel(self.layers)
         self.split_model = LayersListModel(self.layers_for_split)
 
