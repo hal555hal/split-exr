@@ -1,4 +1,15 @@
-from PySide import QtCore
+import nuke
+try:
+    if nuke.NUKE_VERSION_MAJOR < 11:
+        from PySide import QtCore
+    elif nuke.NUKE_VERSION_MAJOR < 16:
+        from PySide2 import QtWidgets, QtGui, QtCore
+        from PySide2.QtCore import Qt
+    else:
+        from PySide6 import QtWidgets, QtGui, QtCore
+        # from PySide6.QtCore import Qt
+except ImportError:
+    from Qt import QtCore, QtGui, QtWidgets
 
 
 class LayersListModel(QtCore.QAbstractListModel):
@@ -27,7 +38,10 @@ class LayersListModel(QtCore.QAbstractListModel):
         if row == -1:
             row = self.rowCount()
 
-        strings = str(data.data(self.Mimetype)).split('\n')
+        if nuke.NUKE_VERSION_MAJOR < 13:
+            strings = str(data.data(self.Mimetype)).split('\n')
+        else:
+            strings = str(data.data(self.Mimetype), "utf-8").split('\n')
         self.insertRows(row, len(strings))
         for i, text in enumerate(strings):
             self.setData(self.index(row + i, 0), text)
@@ -52,6 +66,8 @@ class LayersListModel(QtCore.QAbstractListModel):
             if index.isValid()], key=lambda index: index.row())
         encodedData = '\n'.join(self.data(index, QtCore.Qt.DisplayRole)
                 for index in sortedIndexes)
+        if nuke.NUKE_VERSION_MAJOR >= 13:
+            encodedData = QtCore.QByteArray(encodedData.encode("utf-8"))
         mimeData = QtCore.QMimeData()
         mimeData.setData(self.Mimetype, encodedData)
         return mimeData

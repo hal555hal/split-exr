@@ -1,8 +1,11 @@
 ## Split .exr layers in nuke 
 
 
-### Issues
-The script doesn't work in nuke >= 11!
+### Develp
+- suport for Nuke10,11
+- update for Nuke12 with piSide2
+- upsate for Nuke13 with python3
+- update for Nuke16 with picore6
 
 ### How it works
 
@@ -21,4 +24,5 @@ For example, modify init.py
 import nuke
 
 nuke.pluginAddPath("./python/split-exr")
+nuke.pluginAddPath("./python/split-exr/split_layers16")
 ```
